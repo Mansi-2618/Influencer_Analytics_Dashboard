@@ -1,0 +1,2 @@
+google-cloud-firestore
+vaderSentiment==3.3.2
