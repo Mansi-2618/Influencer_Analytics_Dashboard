@@ -75,6 +75,7 @@ If you've cloned this repository, the dashboard already exists. Skip to **Step 1
 If you want to create a similar dashboard from scratch:
 
 #### Step 1: Create a New Next.js App
+The folder name is same as your next.js app name, for example frontend_dashboard is the folder name so your app name is also same.
 ```bash
 # Navigate to your project root
 cd INFLUENCER_ANALYTICS
