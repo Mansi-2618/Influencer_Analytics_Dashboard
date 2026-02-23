@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+html,
+body {
+  height: 100%;
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+@keyframes floatY {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-30px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes floatX {
+  0% { transform: translateX(0px); }
+  50% { transform: translateX(25px); }
+  100% { transform: translateX(0px); }
+}
+
+@keyframes wave {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(14deg); }
+  40% { transform: rotate(-8deg); }
+  60% { transform: rotate(14deg); }
+  80% { transform: rotate(-4deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.animate-wave {
+  transform-origin: 70% 70%;
+  animation: wave 1.8s ease-in-out infinite;
+}
+
+.analytics-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.analytics-item {
+  position: absolute;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.float-y {
+  animation: floatY 14s ease-in-out infinite;
+}
+
+.float-x {
+  animation: floatX 18s ease-in-out infinite;
+}
+
+@keyframes barGrow {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.bar {
+  width: 16px;
+  border-radius: 4px 4px 0 0;
+  animation: barGrow 0.8s ease-out forwards;
+  transform-origin: bottom;
+  transform: scaleY(0);
+}
+
+.bar:nth-child(1) {
+  height: 35px;
+  background: linear-gradient(180deg, #c0c0c0 0%, #a8a8a8 100%);
+  animation-delay: 0.2s;
+}
+
+.bar:nth-child(2) {
+  height: 50px;
+  background: linear-gradient(180deg, #90ee90 0%, #76d476 100%);
+  animation-delay: 0.3s;
+}
+
+.bar:nth-child(3) {
+  height: 28px;
+  background: linear-gradient(180deg, #ff69b4 0%, #ff1493 100%);
+  animation-delay: 0.4s;
+}
+
+.bar:nth-child(4) {
+  height: 45px;
+  background: linear-gradient(180deg, #4a90e2 0%, #357abd 100%);
+  animation-delay: 0.5s;
+}
