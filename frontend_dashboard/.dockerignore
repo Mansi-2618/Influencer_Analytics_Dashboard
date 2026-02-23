@@ -1,0 +1,34 @@
+# Node Dependencies
+node_modules
+npm-debug.log
+yarn.lock
+
+# Next.js
+.next
+out
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# OS / Editor
+.DS_Store
+.vscode
+.idea
+Thumbs.db
+
+# Logs
+*.log
+
+# Misc
+README.md
+*.md
