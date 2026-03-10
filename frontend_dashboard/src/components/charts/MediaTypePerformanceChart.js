@@ -6,7 +6,6 @@ import {
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
-  Cell,
 } from "recharts";
 
 import { BarChart3 } from "lucide-react";
@@ -26,8 +25,11 @@ export default function MediaTypePerformanceChart({ data }) {
       return (
         <div className="bg-slate-900/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 shadow-xl">
           <p className="text-white font-bold mb-2">{payload[0].payload.media_type}</p>
-          <p className="text-orange-400 font-bold text-lg">
-            {payload[0].value}% Reach
+          <p className="text-orange-400 font-semibold text-md">
+            Avg Reach: {payload[0].value.toLocaleString()}
+          </p>
+          <p className="text-blue-400 font-semibold text-md">
+            Avg Viral Potential Score: {payload[1]?.value}
           </p>
         </div>
       );
@@ -78,12 +80,12 @@ export default function MediaTypePerformanceChart({ data }) {
           
           {/* Y Axis */}
           <YAxis 
-            tickFormatter={(v) => `${v}%`}
+            tickFormatter={(v) => `${v}`}
             tick={{ fill: '#94a3b8', fontSize: 13 }}
             axisLine={{ stroke: '#475569' }}
             tickLine={{ stroke: '#475569' }}
             label={{
-              value: "Reach %",
+              value: "Performance",
               angle: -90,
               dx:-10,
               dy:20,
@@ -95,19 +97,23 @@ export default function MediaTypePerformanceChart({ data }) {
           {/* Tooltip */}
           <Tooltip content={<CustomTooltip />} />
           
-          {/* Bars with different colors */}
+            {/* Avg Reach */}
           <Bar
-            dataKey="reach_percent"
-            radius={[8, 8, 0, 0]}
-            barSize={80}
-          >
-            {data.map((entry, index) => (
-              <Cell 
-                key={`cell-${index}`} 
-                fill={COLORS[entry.media_type] || '#ff8c00'} 
-              />
-            ))}
-          </Bar>
+            dataKey="avg_reach"
+            name="Avg Reach"
+            fill="#ff8c00"
+            radius={[6, 6, 0, 0]}
+            barSize={40}
+          />
+
+          {/* Avg VPS */}
+          <Bar
+            dataKey="avg_vps"
+            name="Avg Viral Potential Score"
+            fill="#3b82f6"
+            radius={[6, 6, 0, 0]}
+            barSize={40}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>
