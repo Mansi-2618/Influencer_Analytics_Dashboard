@@ -38,6 +38,7 @@ export default function Dashboard() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [dashboardGeneratedAt, setDashboardGeneratedAt] = useState(null);
+  const [dailyInsights, setDailyInsights] = useState([]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -60,6 +61,21 @@ export default function Dashboard() {
 
         if (!profileRes.ok) {
           throw new Error(profileJson?.error || "Failed to fetch profile");
+        }
+
+        // ---------- Profile daily insights ----------
+        console.log("Fetching daily insights...");
+        const dailyRes = await fetch("/api/profile-daily-insights");
+        const dailyJson = await dailyRes.json();
+        if (dailyJson?.daily) {
+          const chartData = Object.entries(dailyJson.daily)
+            .map(([date, metrics]) => ({
+              date,
+              reach: metrics.reach ?? 0,
+              accounts_engaged: metrics.accounts_engaged   ?? 0,
+            }))
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+          setDailyInsights(chartData);
         }
 
         // ---------- MEDIA ----------
@@ -163,36 +179,15 @@ export default function Dashboard() {
 
   // ---------------- DERIVED DATA ----------------
   // Reach trend
-  const reachTrendData = Object.values(
-    filteredMedia.reduce((acc, m) => {
-      const date = m.timestamp?.split("T")[0];
-      if (!date) return acc;
-
-      if (!acc[date]) acc[date] = { date, reach: 0, count: 0 };
-      acc[date].reach += m.reach || 0;
-      acc[date].count += 1;
-      return acc;
-    }, {})
-  ).map((d) => ({
+  const reachTrendData = dailyInsights.map((d) => ({
     date: d.date,
-    reach: Math.round(d.reach / d.count),
+    reach: d.reach,
   }));
 
   // Engagement trend
-  const engagementTrendData = Object.values(
-    filteredMedia.reduce((acc, m) => {
-      const date = m.timestamp?.split("T")[0];
-      if (!date) return acc;
-
-      if (!acc[date]) acc[date] = { date, engagement: 0, count: 0 };
-      acc[date].engagement +=
-        (m.likes || 0) + (m.comments || 0) + (m.saves || 0);
-      acc[date].count += 1;
-      return acc;
-    }, {})
-  ).map((d) => ({
-    date: d.date,
-    engagement: Math.round(d.engagement / d.count),
+  const engagementTrendData = dailyInsights.map((d) => ({
+    date:       d.date,
+    engagement: d.accounts_engaged,
   }));
 
   // Media type performance
@@ -202,24 +197,14 @@ export default function Dashboard() {
       if (!acc[type])
         acc[type] = { media_type: type, reach: 0, vps: 0, count: 0 };
       acc[type].reach += m.reach || 0;
-      acc[type].vps += m.viral_potential_score || 0;
+      acc[type].vps   += m.viral_potential_score || 0;
       acc[type].count += 1;
       return acc;
     }, {})
   ).map((d) => ({
     media_type: d.media_type,
-    avg_reach: Math.round(d.reach / d.count),
-    avg_vps: Number((d.vps / d.count).toFixed(2)),
-  }));
-
-  const totalAvgReach = mediaTypePerformance.reduce(
-    (sum, d) => sum + d.avg_reach,
-    0
-  );
-
-  const mediaTypePerformancePercent = mediaTypePerformance.map((d) => ({
-    ...d,
-    reach_percent: Number(((d.avg_reach / totalAvgReach) * 100).toFixed(1)),
+    avg_reach:  Math.round(d.reach / d.count),
+    avg_vps:    Number((d.vps / d.count).toFixed(2)),
   }));
 
   // Reels Hook vs Rewatch
@@ -578,7 +563,7 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               <ReachTrendChart data={reachTrendData} />
               <EngagementTrendChart data={engagementTrendData} />
-              <MediaTypePerformanceChart data={mediaTypePerformancePercent} />
+              <MediaTypePerformanceChart data={mediaTypePerformance} />
               <ViralityScatter data={filteredMedia} />
               <HookEfficiencyChart data={reelsHookVsRewatchData} />
               <RewatchRatioChart data={reelsHookVsRewatchData} />
